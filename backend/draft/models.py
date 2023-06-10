@@ -87,3 +87,15 @@ class Order(models.Model):
 class RefundOrder(models.Model):
     order_id = models.AutoField(primary_key=True)
     status = models.CharField(max_length=100)
+    
+class PickupAddress(models.Model):
+    seller_id = models.ForeignKey(Seller, on_delete=models.CASCADE)
+    address = models.TextField()
+    
+class Vehicle(models.Model):
+    vehicle_id = models.AutoField(primary_key=True)
+    category = models.CharField(max_length=100)
+    transport_manager_id = models.ForeignKey(Transporter, on_delete=models.CASCADE)
+    
+    class Meta:
+        unique_together = ('category', 'transport_manager_id')
