@@ -1,4 +1,7 @@
 from django.db import models
+from django.core.exceptions import ValidationError
+from django.core.validators import EmailValidator
+from django.db.models import UniqueConstraint
 
 # Create your models here.
 
@@ -7,7 +10,7 @@ class BaseUser(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     name = models.CharField(max_length=100)
-    email = models.EmailField(unique=True)
+    email = models.EmailField(unique=True, validators=[EmailValidator()])
     password = models.CharField(max_length=100)
     phone = models.CharField(max_length=16)
     address = models.TextField()
@@ -76,6 +79,11 @@ class Item(models.Model):
     publish_date = models.DateField()
     pickup_address = models.TextField()
     
+
+    def clean(self):
+        if self.total_stock < self.minimum_order:
+            raise ValidationError('Total stock should be greater than minimum order')
+    
     
 class Order(models.Model):
     order_id = models.AutoField(primary_key=True)
@@ -96,6 +104,7 @@ class Vehicle(models.Model):
     vehicle_id = models.AutoField(primary_key=True)
     category = models.CharField(max_length=100)
     transport_manager_id = models.ForeignKey(Transporter, on_delete=models.CASCADE)
+    stock = models.IntegerField()
     
     class Meta:
-        unique_together = ('category', 'transport_manager_id')
+        constraints = [UniqueConstraint(fields=['category', 'transport_manager_id'], name='unique_vehicle')]
