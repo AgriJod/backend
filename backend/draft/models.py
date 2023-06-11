@@ -1,5 +1,4 @@
 from django.db import models
-from django.core.exceptions import ValidationError
 from django.core.validators import EmailValidator
 from django.db.models import UniqueConstraint
 
@@ -78,11 +77,7 @@ class Item(models.Model):
     price_per_kg = models.FloatField()
     publish_date = models.DateField()
     pickup_address = models.TextField()
-    
 
-    def clean(self):
-        if self.total_stock < self.minimum_order:
-            raise ValidationError('Total stock should be greater than minimum order')
     
     
 class Order(models.Model):

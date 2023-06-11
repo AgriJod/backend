@@ -40,10 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
   
     'draft',
-    
     'core',
-    
-    'social_django'
+    'social_django',
+    'rest_framework',
 ]
 
 
