@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.core.exceptions import ValidationError
-from .models import Item, Seller, Order
+from .models import Item, Seller, Order, Buyer
 
 class ItemSerializer(serializers.ModelSerializer):
     
@@ -20,4 +20,10 @@ class SellerSerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
+        fields = '__all__'
+        
+
+class BuyerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Buyer
         fields = '__all__'
