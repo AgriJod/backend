@@ -81,11 +81,36 @@ class Item(models.Model):
     
     
 class Order(models.Model):
+    
+    PAYMENT_STATUS_CHOICES = [
+        ('Initiated', 'Initiated'),
+        ('Completed', 'Completed'),
+        ('Waiting for Seller', 'Waiting for Seller'),
+        #('Refunded', 'Refunded'),
+    ]
+    
     order_id = models.AutoField(primary_key=True)
     seller_id = models.ForeignKey(Seller, on_delete=models.CASCADE)
     buyer_id = models.ForeignKey(Buyer, on_delete=models.CASCADE)
     item_id = models.ForeignKey(Item, on_delete=models.CASCADE) # TODO: CASCADE or not
     transport_manager_id = models.ForeignKey(Transporter, on_delete=models.CASCADE)
+    payment_status = models.CharField(max_length=100, choices=PAYMENT_STATUS_CHOICES, default='Initiated')
+    
+    
+    """def initiate_payment(self):
+        # Set payment_status as 'Initiated'
+        self.payment_status = 'Initiated'
+        self.save()
+
+    def complete_payment(self):
+        # Set payment_status as 'Waiting for Seller'
+        self.payment_status = 'Waiting for Seller'
+        self.save()
+
+    def accept_order(self):
+        # Set payment_status as 'Completed'
+        self.payment_status = 'Completed'
+        self.save()"""
 
 class RefundOrder(models.Model):
     order_id = models.AutoField(primary_key=True)
