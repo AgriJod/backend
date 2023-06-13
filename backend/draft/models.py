@@ -25,6 +25,7 @@ class BaseUser(models.Model):
 
 class Buyer(BaseUser):
     buyer_id = models.AutoField(primary_key=True)
+    quantity = models.IntegerField()
     
 
     def __str__(self):
