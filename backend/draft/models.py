@@ -29,7 +29,7 @@ class Buyer(BaseUser):
     
 
     def __str__(self):
-        return str(self.name)
+        return str(self.buyer_id)
 
 class Seller(BaseUser):
     seller_id = models.AutoField(primary_key=True)
@@ -46,7 +46,7 @@ class Seller(BaseUser):
     
 
     def __str__(self):
-        return str(self.name)
+        return str(self.seller_id)
     
 class Transporter(BaseUser):
     transport_manager_id = models.AutoField(primary_key=True)
@@ -64,13 +64,14 @@ class Transporter(BaseUser):
     bank_ifsc_code = models.CharField(max_length=100)
     
     def __str__(self):
-        return str(self.name)
+        return str(self.transport_manager_id)
     
 class Item(models.Model):
     item_id = models.AutoField(primary_key=True) # TODO: format
     seller_id = models.ForeignKey(Seller, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     description = models.TextField()
+    item_image = models.ImageField(upload_to='items/item_proof')
     harvest_date = models.DateField()
     bag_type = models.CharField(max_length=10)
     total_stock = models.IntegerField()
@@ -79,6 +80,18 @@ class Item(models.Model):
     publish_date = models.DateField()
     pickup_address = models.TextField()
 
+    def __str__(self):
+        return str(self.item_id)
+    
+class ItemSelection(models.Model):
+
+    item_selection_id = models.AutoField(primary_key=True)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    quantity = models.IntegerField()
+    
+    def __str__(self):
+        return str(self.item_selection_id)
+    
     
     
 class Order(models.Model):
@@ -96,6 +109,9 @@ class Order(models.Model):
     item_id = models.ForeignKey(Item, on_delete=models.CASCADE) # TODO: CASCADE or not
     transport_manager_id = models.ForeignKey(Transporter, on_delete=models.CASCADE)
     payment_status = models.CharField(max_length=100, choices=PAYMENT_STATUS_CHOICES, default='Initiated')
+    
+    def __str__(self):
+        return str(self.order_id)
     
     
     """def initiate_payment(self):
