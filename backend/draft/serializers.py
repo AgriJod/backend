@@ -1,8 +1,9 @@
 from rest_framework import serializers
 from django.core.exceptions import ValidationError
-from .models import Item, Seller, Order, Buyer
+from .models import Item, Seller, Order, Buyer, ItemSelection
 
 class ItemSerializer(serializers.ModelSerializer):
+    
     
     def validate(self, data):
         if data['total_stock'] < data['minimum_order']:
@@ -12,7 +13,26 @@ class ItemSerializer(serializers.ModelSerializer):
         model = Item
         fields = '__all__'
         
+class ItemSelectionSerializer(serializers.ModelSerializer):
+    
+    item = serializers.PrimaryKeyRelatedField(queryset=Item.objects.all())
+    
+    
+    def validate_quantity(self, value):       
+        item = self.initial_data.get('item')
+        
+        if item:
+            item_instance = Item.objects.get(pk=item)
+            if value < item_instance.minimum_order or value > item_instance.total_stock:  # Compare quantity with MOA
+                raise serializers.ValidationError("Quantity should be greater than or equal to the MOA.")
+        return value
+
+    class Meta:
+        model = ItemSelection
+        fields = ('item_selection_id', 'item', 'quantity')
+        
 class SellerSerializer(serializers.ModelSerializer):
+    
     class Meta:
         model = Seller
         fields = '__all__'
@@ -25,12 +45,6 @@ class OrderSerializer(serializers.ModelSerializer):
 
 class BuyerSerializer(serializers.ModelSerializer):
     
-    def validate_quantity(self, value):
-        item = Item.objects.get(item_id=1) # Fetch the associated Item instance based on the condition
-        if value < item.minimum_order or value >= item.total_stock:
-            raise ValidationError('Invalid quantity')
-
-        return value
     
     class Meta:
         model = Buyer
